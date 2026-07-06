@@ -1,0 +1,37 @@
+[
+    {
+        "khoa": "Khoa Công nghệ thông tin",
+        "ma_nganh": "7480201",
+        "ten_nganh": "Công nghệ thông tin",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 24.5
+    },
+    {
+        "khoa": "Khoa Điện - Điện tử",
+        "ma_nganh": "7510301",
+        "ten_nganh": "Kỹ thuật điện",
+        "to_hop": "A00, A01",
+        "diem_chuan": 23.0
+    },
+    {
+        "khoa": "Khoa Kinh tế",
+        "ma_nganh": "7340101",
+        "ten_nganh": "Quản trị kinh doanh",
+        "to_hop": "A00, A01, D01",
+        "diem_chuan": 24.0
+    },
+    {
+        "khoa": "Khoa Xây dựng",
+        "ma_nganh": "7580201",
+        "ten_nganh": "Kỹ thuật xây dựng",
+        "to_hop": "A00, A01",
+        "diem_chuan": 21.0
+    },
+    {
+        "khoa": "Khoa Vận tải - Kinh tế",
+        "ma_nganh": "7840101",
+        "ten_nganh": "Khai thác vận tải",
+        "to_hop": "A00, A01, D01",
+        "diem_chuan": 22.5
+    }
+]

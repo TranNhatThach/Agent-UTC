@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Agent Tuyển Sinh</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #eee;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 700px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #222;
+        }
+
+        .header h2 {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            color: #eee;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+            padding: 5px;
+        }
+
+        .btn-icon:hover {
+            color: #fff;
+        }
+
+        /* Chat Area */
+        .chat {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbar for clean look */
+        .chat::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            animation: up .2s ease;
+            font-size: 14px;
+        }
+
+        .user {
+            background: #2563eb;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            color: #fff;
+        }
+
+        .bot {
+            background: #1a1a1a;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            color: #ccc;
+            border: 1px solid #222;
+        }
+
+        .err {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        @keyframes up {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Typing Indicator */
+        .typing {
+            display: none;
+            gap: 4px;
+            align-self: flex-start;
+            background: #1a1a1a;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #222;
+        }
+
+        .typing.on {
+            display: flex;
+        }
+
+        .typing span {
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            animation: bounce 1.2s infinite both;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px 0;
+            display: flex;
+            gap: 12px;
+            background: #0a0a0a;
+        }
+
+        .input-area input {
+            flex: 1;
+            background: #111;
+            border: 1px solid #333;
+            color: #eee;
+            padding: 14px 16px;
+            outline: none;
+            font-size: 14px;
+            border-radius: 24px;
+            transition: 0.2s;
+        }
+
+        .input-area input:focus {
+            border-color: #2563eb;
+            background: #1a1a1a;
+        }
+
+        .send-btn {
+            background: #2563eb;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+
+        .send-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transform: translateX(2px);
+            /* Center optically */
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .85);
+            backdrop-filter: blur(4px);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.on {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #111;
+            border: 1px solid #333;
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-box h3 {
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .modal-box label {
+            display: block;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .modal-box select,
+        .modal-box input[type=password],
+        .modal-box input[type=file] {
+            width: 100%;
+            margin-top: 8px;
+            padding: 10px 12px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: #eee;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .modal-box select {
+            cursor: pointer;
+        }
+
+        .modal-box small {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .small-ok {
+            color: #10b981 !important;
+            font-weight: 500;
+        }
+
+        .small-err {
+            color: #f87171 !important;
+            font-weight: 500;
+        }
+
+        .modal-box small a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .modal-box small a:hover {
+            text-decoration: underline;
+        }
+
+        .modal-box hr {
+            border: 0;
+            border-top: 1px solid #222;
+            margin: 20px 0;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.2s;
+            padding: 10px 16px;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #888;
+            border: 1px solid #333;
+        }
+
+        .btn-cancel:hover {
+            color: #fff;
+            background: #222;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-upload {
+            width: 100%;
+            margin-top: 10px;
+            background: #1a1a1a;
+            color: #ddd;
+            border: 1px solid #333;
+        }
+
+        .btn-upload:hover {
+            background: #222;
+            border-color: #555;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+        <div class="header">
+            <h2>UTC Agent </h2>
+            <span class="status" id="status">Gemini</span>
+            <button class="btn-icon" id="open-settings" title="Cài đặt & Dữ liệu">⚙</button>
+        </div>
+
+        <div class="chat" id="chat">
+            <div class="msg bot">Xin chào! Tôi là UTC Agent , Agent tư vấn tuyển sinh.</div>
+            <div class="typing" id="typing"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="msg" placeholder="Bạn muốn hỏi gì..." autocomplete="off">
+            <button class="send-btn" id="send">
+                <svg viewBox="0 0 24 24">
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Settings -->
+        <div class="modal" id="modal">
+            <div class="modal-box">
+                <h3>Cài đặt Hệ thống</h3>
+
+                <p style="font-size: 13px; color: #aaa; margin-bottom: 20px;">Hệ thống đang hoạt động ở chế độ thuần Local (sử dụng mô hình Ollama).</p>
+                <hr>
+
+                <label>Dạy AI bằng Tài Liệu (PDF, Word, TXT)
+                    <input type="file" id="file" accept=".txt,.pdf,.docx">
+                    <button class="btn btn-upload" id="upload">Tải lên & Nhúng vào Vector DB</button>
+                    <small id="upload-status"></small>
+                </label>
+
+                <div class="modal-actions">
+                    <button class="btn btn-cancel" id="close-modal">Hủy</button>
+                    <button class="btn btn-save" id="save-modal">Lưu thay đổi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const $ = id => document.getElementById(id);
+            const chat = $('chat'), msgInput = $('msg'), typing = $('typing'), statusTxt = $('status');
+            const modal = $('modal');
+            const fileInput = $('file'), uploadBtn = $('upload'), uploadStatus = $('upload-status');
+
+            // Server chạy ở cổng 5000
+            const API = 'http://127.0.0.1:5000/api';
+
+            statusTxt.textContent = 'Local Agent (Ollama)';
+
+            // Mở Modal
+            $('open-settings').onclick = () => {
+                modal.classList.add('on');
+            };
+
+            // Đóng Modal
+            $('close-modal').onclick = () => modal.classList.remove('on');
+
+            // Lưu cài đặt
+            $('save-modal').onclick = () => {
+                modal.classList.remove('on');
+            };
+
+            // Xử lý Upload file
+            uploadBtn.onclick = async () => {
+                if (!fileInput.files[0]) {
+                    uploadStatus.textContent = "Vui lòng chọn 1 file.";
+                    uploadStatus.className = "small-err";
+                    return;
+                }
+
+                const fd = new FormData();
+                fd.append('file', fileInput.files[0]);
+
+                uploadStatus.textContent = "Đang xử lý...";
+                uploadStatus.className = "";
+                uploadBtn.disabled = true;
+
+                try {
+                    const res = await fetch(`${API}/upload`, { method: 'POST', body: fd });
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        uploadStatus.textContent = "✅ " + data.message;
+                        uploadStatus.className = "small-ok";
+                        fileInput.value = ""; // Clear file
+                    } else {
+                        uploadStatus.textContent = "❌ " + (data.error || "Lỗi nạp file");
+                        uploadStatus.className = "small-err";
+                    }
+                } catch (e) {
+                    uploadStatus.textContent = "❌ Không thể kết nối tới Server. Đảm bảo server đang chạy.";
+                    uploadStatus.className = "small-err";
+                } finally {
+                    uploadBtn.disabled = false;
+                }
+            };
+
+            // Hàm in tin nhắn ra màn hình
+            const addMsg = (text, type, isErr = false) => {
+                const d = document.createElement('div');
+                d.className = `msg ${type} ${isErr ? 'err' : ''}`;
+                d.textContent = text;
+                chat.insertBefore(d, typing);
+                chat.scrollTop = chat.scrollHeight;
+            };
+
+            // Quản lý Lịch sử Chat trong bộ nhớ RAM (tự động mất khi reload/F5 trang hoặc tắt tab)
+            let chatHistory = [];
+
+            // Hàm gửi tin nhắn
+            const send = async () => {
+                const text = msgInput.value.trim();
+                if (!text) return;
+
+                // Chuẩn bị history để gửi lên server (chưa gồm tin nhắn hiện tại)
+                const historyToSend = [...chatHistory];
+
+                // Hiển thị tin nhắn người dùng và lưu vào history
+                addMsg(text, 'user');
+                chatHistory.push({ role: 'user', content: text });
+                
+                msgInput.value = '';
+
+                typing.classList.add('on');
+                chat.scrollTop = chat.scrollHeight;
+
+                try {
+                    const res = await fetch(`${API}/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: text,
+                            history: historyToSend
+                        })
+                    });
+
+                    const data = await res.json();
+                    typing.classList.remove('on');
+
+                    if (!res.ok) {
+                        addMsg(data.error || 'Lỗi server', 'bot', true);
+                        // Xóa tin nhắn bị lỗi khỏi history
+                        chatHistory.pop();
+                    } else {
+                        addMsg(data.reply, 'bot');
+                        chatHistory.push({ role: 'model', content: data.reply });
+                    }
+                } catch (e) {
+                    typing.classList.remove('on');
+                    addMsg('Không thể kết nối Server (http://127.0.0.1:5000).', 'bot', true);
+                    // Xóa tin nhắn bị lỗi khỏi history
+                    chatHistory.pop();
+                }
+            };
+
+            $('send').onclick = send;
+            msgInput.onkeypress = e => { if (e.key === 'Enter') send(); };
+            msgInput.focus();
+        });
+    </script>
+</body>
+
+</html>
