@@ -1,37 +1,178 @@
 [
     {
+        "nam": 2025,
         "khoa": "Khoa Công nghệ thông tin",
         "ma_nganh": "7480201",
         "ten_nganh": "Công nghệ thông tin",
         "to_hop": "A00, A01, D01, D07",
-        "diem_chuan": 24.5
+        "diem_chuan": 25.85
     },
     {
+        "nam": 2025,
+        "khoa": "Khoa Công nghệ thông tin",
+        "ma_nganh": "7480101",
+        "ten_nganh": "Khoa học máy tính",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.40
+    },
+    {
+        "nam": 2025,
+        "khoa": "Khoa Điện - Điện tử",
+        "ma_nganh": "7520216",
+        "ten_nganh": "Kỹ thuật điều khiển và tự động hóa",
+        "to_hop": "A00, A01, D07",
+        "diem_chuan": 25.42
+    },
+    {
+        "nam": 2025,
         "khoa": "Khoa Điện - Điện tử",
         "ma_nganh": "7510301",
         "ten_nganh": "Kỹ thuật điện",
-        "to_hop": "A00, A01",
-        "diem_chuan": 23.0
+        "to_hop": "A00, A01, D07",
+        "diem_chuan": 24.05
     },
     {
+        "nam": 2025,
+        "khoa": "Khoa Điện - Điện tử",
+        "ma_nganh": "7520207",
+        "ten_nganh": "Kỹ thuật điện tử - viễn thông",
+        "to_hop": "A00, A01, D07",
+        "diem_chuan": 24.60
+    },
+    {
+        "nam": 2025,
+        "khoa": "Khoa Cơ khí",
+        "ma_nganh": "7520114",
+        "ten_nganh": "Kỹ thuật cơ điện tử",
+        "to_hop": "A00, A01, D07",
+        "diem_chuan": 24.85
+    },
+    {
+        "nam": 2025,
+        "khoa": "Khoa Cơ khí",
+        "ma_nganh": "7520130",
+        "ten_nganh": "Kỹ thuật ô tô",
+        "to_hop": "A00, A01, D07",
+        "diem_chuan": 25.02
+    },
+    {
+        "nam": 2025,
         "khoa": "Khoa Kinh tế",
         "ma_nganh": "7340101",
         "ten_nganh": "Quản trị kinh doanh",
-        "to_hop": "A00, A01, D01",
-        "diem_chuan": 24.0
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.34
     },
     {
-        "khoa": "Khoa Xây dựng",
-        "ma_nganh": "7580201",
-        "ten_nganh": "Kỹ thuật xây dựng",
-        "to_hop": "A00, A01",
-        "diem_chuan": 21.0
+        "nam": 2025,
+        "khoa": "Khoa Kinh tế",
+        "ma_nganh": "7340201",
+        "ten_nganh": "Tài chính - Ngân hàng",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.10
     },
     {
+        "nam": 2025,
+        "khoa": "Khoa Kinh tế",
+        "ma_nganh": "7340301",
+        "ten_nganh": "Kế toán",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.12
+    },
+    {
+        "nam": 2025,
         "khoa": "Khoa Vận tải - Kinh tế",
         "ma_nganh": "7840101",
         "ten_nganh": "Khai thác vận tải",
         "to_hop": "A00, A01, D01",
-        "diem_chuan": 22.5
+        "diem_chuan": 25.65
+    },
+    {
+        "nam": 2025,
+        "khoa": "Khoa Vận tải - Kinh tế",
+        "ma_nganh": "7510605",
+        "ten_nganh": "Logistics và quản lý chuỗi cung ứng",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 26.28
+    },
+    {
+        "nam": 2025,
+        "khoa": "Khoa Xây dựng",
+        "ma_nganh": "7580201",
+        "ten_nganh": "Kỹ thuật xây dựng",
+        "to_hop": "A00, A01",
+        "diem_chuan": 21.50
+    },
+    {
+        "nam": 2025,
+        "khoa": "Khoa Quản lý xây dựng",
+        "ma_nganh": "7580302",
+        "ten_nganh": "Quản lý xây dựng",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 23.50
+    },
+    {
+        "nam": 2024,
+        "khoa": "Khoa Công nghệ thông tin",
+        "ma_nganh": "7480201",
+        "ten_nganh": "Công nghệ thông tin",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.67
+    },
+    {
+        "nam": 2024,
+        "khoa": "Khoa Công nghệ thông tin",
+        "ma_nganh": "7480101",
+        "ten_nganh": "Khoa học máy tính",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.32
+    },
+    {
+        "nam": 2024,
+        "khoa": "Khoa Điện - Điện tử",
+        "ma_nganh": "7520216",
+        "ten_nganh": "Kỹ thuật điều khiển và tự động hóa",
+        "to_hop": "A00, A01, D07",
+        "diem_chuan": 25.15
+    },
+    {
+        "nam": 2024,
+        "khoa": "Khoa Điện - Điện tử",
+        "ma_nganh": "7510301",
+        "ten_nganh": "Kỹ thuật điện",
+        "to_hop": "A00, A01, D07",
+        "diem_chuan": 23.80
+    },
+    {
+        "nam": 2024,
+        "khoa": "Khoa Vận tải - Kinh tế",
+        "ma_nganh": "7510605",
+        "ten_nganh": "Logistics và quản lý chuỗi cung ứng",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 26.07
+    },
+    {
+        "nam": 2023,
+        "khoa": "Khoa Công nghệ thông tin",
+        "ma_nganh": "7480201",
+        "ten_nganh": "Công nghệ thông tin",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.38
+    },
+    {
+        "nam": 2023,
+        "khoa": "Khoa Công nghệ thông tin",
+        "ma_nganh": "7480101",
+        "ten_nganh": "Khoa học máy tính",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 25.10
+    },
+    {
+        "nam": 2023,
+        "khoa": "Khoa Vận tải - Kinh tế",
+        "ma_nganh": "7510605",
+        "ten_nganh": "Logistics và quản lý chuỗi cung ứng",
+        "to_hop": "A00, A01, D01, D07",
+        "diem_chuan": 26.15
     }
 ]

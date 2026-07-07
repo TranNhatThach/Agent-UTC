@@ -1,6 +1,6 @@
 import os
 import glob
-from rag_utils import process_and_embed_file
+from services.document_worker import process_and_embed_file
 
 DATA_DIR = "data"
 

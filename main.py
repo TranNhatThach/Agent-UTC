@@ -6,15 +6,16 @@ import shutil
 import hashlib
 import os
 
-# Import các cấu hình và module phụ trợ
+# Import configurations and services
 from config import UPLOAD_FOLDER, redis_client, has_db
 from rate_limiter import rate_limiter
-from agent import run_ollama_agent
-from rag_utils import process_and_embed_file, get_qdrant_client
+from services.llm_service import run_ollama_agent
+from services.document_worker import process_and_embed_file
+from services.vector_store import get_qdrant_client, lookup_majors_by_score
 
 app = FastAPI()
 
-# Cấu hình CORS
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,11 +33,61 @@ class ChatRequest(BaseModel):
     message: str
     history: Optional[List[HistoryItem]] = []
 
+@app.post("/api/analyze")
+async def analyze_scores(scores: List[float]):
+    """
+    Nhận một danh sách điểm số môn thi và gọi Agent phân tích kết quả tư vấn tuyển sinh ngành học tại Giao thông Vận tải.
+    """
+    if not scores:
+        raise HTTPException(status_code=400, detail="Danh sách điểm không được rỗng")
+    try:
+        # Check if only a single total score is provided
+        if len(scores) == 1:
+            total_score = scores[0]
+            prompt = (
+                f"Học sinh chỉ cung cấp tổng điểm xét tuyển THPT là {total_score} điểm (chưa rõ tổ hợp môn cụ thể). "
+                f"Hãy tư vấn chi tiết các ngành, khoa của trường Đại học Giao thông Vận tải mà học sinh này có thể đỗ (điểm chuẩn từ {total_score} trở xuống), "
+                f"đồng thời liệt kê các tổ hợp môn tương ứng của từng ngành đó để học sinh tham khảo."
+            )
+            response_payload = {
+                "success": True,
+                "total_score": total_score,
+                "input_type": "total_score_only"
+            }
+        else:
+            math = scores[0] if len(scores) > 0 else 0.0
+            physics = scores[1] if len(scores) > 1 else 0.0
+            chemistry = scores[2] if len(scores) > 2 else 0.0
+            english = scores[3] if len(scores) > 3 else 0.0
+            literature = scores[4] if len(scores) > 4 else 0.0
+            
+            prompt = (
+                f"Phân tích điểm thi THPT của học sinh: "
+                f"Toán: {math}, Lý: {physics}, Hóa: {chemistry}, Anh: {english}, Văn: {literature}. "
+                f"Hãy tư vấn chi tiết các tổ hợp xét tuyển (A00, A01, D01, D07) và các ngành học sinh này có thể đỗ tại trường."
+            )
+            response_payload = {
+                "success": True,
+                "math": math,
+                "physics": physics,
+                "chemistry": chemistry,
+                "english": english,
+                "literature": literature,
+                "input_type": "subject_scores"
+            }
+        
+        local_model_name = os.environ.get('LOCAL_MODEL_NAME', 'tuvan_thpt')
+        reply = run_ollama_agent(prompt, local_model_name)
+        response_payload["recommendations"] = reply
+        return response_payload
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi phân tích điểm bằng Agent: {e}")
+
 @app.post("/api/upload", dependencies=[Depends(rate_limiter)])
 async def upload_file(file: UploadFile = File(...)):
     global has_db
     if not has_db:
-        # Thử kết nối lại DB động
+        # Try to reconnect dynamically
         try:
             get_qdrant_client()
             has_db = True
@@ -71,37 +122,13 @@ async def chat_endpoint(payload: ChatRequest):
     if not message:
         raise HTTPException(status_code=400, detail="Vui lòng cung cấp tin nhắn")
 
-    # Kiểm tra Redis Cache trước
-    cache_key = None
-    if redis_client:
-        try:
-            # Tạo key dựa vào message và history
-            history_str = "".join([f"{msg.role}:{msg.content}" for msg in history])
-            hash_input = f"local:{history_str}:{message.strip().lower()}"
-            cache_key = f"chat_cache:{hashlib.md5(hash_input.encode('utf-8')).hexdigest()}"
-            
-            cached_reply = redis_client.get(cache_key)
-            if cached_reply:
-                print(f"[Redis Cache] Đánh trúng cache cho câu hỏi: '{message}'")
-                return {"reply": cached_reply, "cached": True}
-        except Exception as cache_err:
-            print(f"[Redis Warning] Lỗi đọc cache: {cache_err}")
-
     try:
-        # Chuyển đổi history Pydantic model thành list dict
+        # Convert history Pydantic model to list of dicts
         history_list = [{"role": h.role, "content": h.content} for h in history]
         
-        # Chạy Agent Local Ollama
+        # Run local agent
         local_model_name = os.environ.get('LOCAL_MODEL_NAME', 'tuvan_thpt')
         reply = run_ollama_agent(message, local_model_name, history_list)
-
-        # Lưu vào Redis Cache nếu thành công (Cache trong 1 giờ)
-        if redis_client and cache_key and reply:
-            try:
-                redis_client.set(cache_key, reply, ex=3600)
-                print("[Redis Cache] Đã lưu kết quả mới vào cache.")
-            except Exception as cache_err:
-                print(f"[Redis Warning] Lỗi lưu cache: {cache_err}")
 
         return {"reply": reply}
 
@@ -118,11 +145,11 @@ if __name__ == '__main__':
     print("========================================")
     
     try:
-        from rag_utils import get_embedding_model
+        from services.vector_store import get_embedding_model
         print("Đang tải trước model Embedding BGE-m3 trong Main Thread...")
         get_embedding_model()
         print("✅ Đã tải xong model Embedding.")
     except Exception as model_err:
         print(f"⚠️ Cảnh báo: Lỗi tải trước model Embedding: {model_err}")
 
-    uvicorn.run("server:app", host="127.0.0.1", port=5000)
+    uvicorn.run("main:app", host="127.0.0.1", port=5000)

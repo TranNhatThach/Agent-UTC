@@ -375,7 +375,7 @@
     <div class="app">
         <div class="header">
             <h2>UTC Agent </h2>
-            <span class="status" id="status">Gemini</span>
+            <span class="status" id="status"></span>
             <button class="btn-icon" id="open-settings" title="Cài đặt & Dữ liệu">⚙</button>
         </div>
 
@@ -398,7 +398,7 @@
             <div class="modal-box">
                 <h3>Cài đặt Hệ thống</h3>
 
-                <p style="font-size: 13px; color: #aaa; margin-bottom: 20px;">Hệ thống đang hoạt động ở chế độ thuần Local (sử dụng mô hình Ollama).</p>
+                <p style="font-size: 13px; color: #aaa; margin-bottom: 20px;">Hệ thống đang hoạt động ở chế độ thuần</p>
                 <hr>
 
                 <label>Dạy AI bằng Tài Liệu (PDF, Word, TXT)
@@ -425,7 +425,7 @@
             // Server chạy ở cổng 5000
             const API = 'http://127.0.0.1:5000/api';
 
-            statusTxt.textContent = 'Local Agent (Ollama)';
+            statusTxt.textContent = '';
 
             // Mở Modal
             $('open-settings').onclick = () => {
@@ -498,7 +498,7 @@
                 // Hiển thị tin nhắn người dùng và lưu vào history
                 addMsg(text, 'user');
                 chatHistory.push({ role: 'user', content: text });
-                
+
                 msgInput.value = '';
 
                 typing.classList.add('on');
